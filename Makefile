@@ -1,5 +1,5 @@
 CXX = g++
-CXXFLAGS = -std=c++17
+CXXFLAGS = -std=c++17 -I/usr/include/rapidjson
 LIBS = -lcurl
 TARGET = graphcrawler
 SRCS = main.cpp
