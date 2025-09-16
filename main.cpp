@@ -3,6 +3,7 @@
 #include <vector> 
 #include <queue> 
 #include <set> 
+#include <chrono>
 #include <curl/curl.h> 
 #include <rapidjson/document.h> 
 
@@ -84,7 +85,17 @@ int main(int argc, char* argv[]) {
     std::string start = argv[1]; 
     int d = std::stoi(argv[2]); 
 
+    // start timer
+    auto start_time = std::chrono::high_resolution_clock::now();
+
     auto res = bfs(start, d); 
+
+    //stop timer
+    auto end_time = std::chrono::high_resolution_clock::now();
+    std::chrono::duration<double> duration = end_time - start_time;
+
     for (auto& x : res) std::cout << x << "\n"; 
+    std::cout << "BFS execution time: " << duration.count() << " seconds\n";
+    
     return 0; 
 }
