@@ -22,7 +22,7 @@ std::string url_encode(const std::string &value) {
     return encoded; 
 } 
 
-// call the API and get the raw JSON text for a node
+// call the API, get the raw JSON text for a node
 std::string get_json(const std::string& node) { 
     std::string out; 
     std::string url = "http://hollywood-graph-crawler.bridgesuncc.org/neighbors/" + url_encode(node); 
@@ -41,15 +41,6 @@ std::vector<std::string> get_neighbors(const std::string& node) {
     std::string j = get_json(node); 
     rapidjson::Document d; 
     d.Parse(j.c_str()); 
-
-    // bail if response is not a JSON object
-    if (!d.IsObject()) return n; 
-
-    // print error if node not found
-    if (d.HasMember("error")) { 
-        std::cerr << "Error: " << d["error"].GetString() << "\n"; 
-        return n; 
-    } 
 
     // if JSON has "neighbors" list, copy into vector
     if (d.HasMember("neighbors") && d["neighbors"].IsArray()) { 
@@ -93,7 +84,6 @@ int main(int argc, char* argv[]) {
     std::string start = argv[1]; 
     int d = std::stoi(argv[2]); 
 
-    // run the search and print results
     auto res = bfs(start, d); 
     for (auto& x : res) std::cout << x << "\n"; 
     return 0; 
