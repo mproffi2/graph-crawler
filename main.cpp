@@ -3,6 +3,8 @@
 #include <vector>
 #include <queue>
 #include <set>
+#include <sstream>
+#include <iomanip>
 #include <curl/curl.h>
 #include <rapidjson/document.h>
 
@@ -12,16 +14,39 @@ size_t write_data(void* ptr, size_t size, size_t nmemb, void* userdata) {
     return size * nmemb;
 }
 
+// URL encode a string for safe HTTP requests
+std::string url_encode(const std::string &value) {
+    std::ostringstream escaped;
+    escaped.fill('0');
+    escaped << std::hex;
+    for (char c : value) {
+        if (isalnum(c) || c == '-' || c == '_' || c == '.' || c == '~') {
+            escaped << c;
+        } else {
+            escaped << '%' << std::setw(2) << int((unsigned char)c);
+        }
+    }
+    return escaped.str();
+}
+
 // call the API and get the raw JSON text for a node
 std::string get_json(const std::string& node) {
     std::string out;
-    std::string url = "http://hollywood-graph-crawler.bridgesuncc.org/neighbors/" + node;
+    std::string url = "http://hollywood-graph-crawler.bridgesuncc.org/neighbors/" + url_encode(node);
 
     CURL* c = curl_easy_init();
+    if (!c) {
+        std::cerr << "Error: Failed to initialize curl.\n";
+        return out;
+    }
+
     curl_easy_setopt(c, CURLOPT_URL, url.c_str());
     curl_easy_setopt(c, CURLOPT_WRITEFUNCTION, write_data);
     curl_easy_setopt(c, CURLOPT_WRITEDATA, &out);
-    curl_easy_perform(c);
+    CURLcode res = curl_easy_perform(c);
+    if (res != CURLE_OK) {
+        std::cerr << "Error: curl failed: " << curl_easy_strerror(res) << "\n";
+    }
     curl_easy_cleanup(c);
     return out;
 }
@@ -35,7 +60,10 @@ std::vector<std::string> get_neighbors(const std::string& node) {
     d.Parse(j.c_str());
 
     // bail if response is not a JSON object
-    if (!d.IsObject()) return n;
+    if (!d.IsObject()) {
+        std::cerr << "Error: Invalid JSON response for node \"" << node << "\"\n";
+        return n;
+    }
 
     // print error if node not found
     if (d.HasMember("error")) {
@@ -56,6 +84,7 @@ std::vector<std::string> get_neighbors(const std::string& node) {
 
     return n;
 }
+
 // do a breadth-first search to given depth
 std::set<std::string> bfs(const std::string& start, int depth) {
     std::set<std::string> seen;                       
