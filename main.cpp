@@ -21,7 +21,7 @@ string encode(string s) {
 
 string get_json(string node) {
     string out;
-    string url = "http://hollywood-graph-crawler.bridgesuncc.org/neighbors/" + encode(node);
+    std::string url = "http://hollywood-graph-crawler.bridgesuncc.org/neighbors/" + node;
     CURL* c = curl_easy_init();
     curl_easy_setopt(c, CURLOPT_URL, url.c_str());
     curl_easy_setopt(c, CURLOPT_WRITEFUNCTION, write_data);
