@@ -95,7 +95,7 @@ int main(int argc, char* argv[]) {
     std::chrono::duration<double> duration = end_time - start_time;
 
     for (auto& x : res) std::cout << x << "\n"; 
-    std::cout << "BFS execution time: " << duration.count() << " seconds\n";
-    
+    std::cout << "Time for search taken: " << duration.count() << " seconds\n";
+
     return 0; 
 }
