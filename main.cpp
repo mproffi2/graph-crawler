@@ -48,9 +48,14 @@ std::vector<std::string> get_neighbors(const std::string& node) {
         for (auto& v : d["neighbors"].GetArray())
             if (v.IsString()) n.push_back(v.GetString());
     }
+
+    // if node has no neighbors
+    if (n.empty() && !d.HasMember("error")) {
+        std::cerr << "Warning: Node \"" << node << "\" has no neighbors.\n";
+    }
+
     return n;
 }
-
 // do a breadth-first search to given depth
 std::set<std::string> bfs(const std::string& start, int depth) {
     std::set<std::string> seen;                       
