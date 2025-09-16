@@ -37,7 +37,7 @@ vector<string> get_neighbors(string node) {
     rapidjson::Document d;
     d.Parse(j.c_str());
     if (d.HasMember("neighbors")) {
-        for (auto v : d["neighbors"].GetArray()) n.push_back(v.GetString());
+        for (auto& v : d["neighbors"].GetArray()) n.push_back(v.GetString());
     }
     return n;
 }
