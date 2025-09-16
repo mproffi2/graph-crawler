@@ -50,7 +50,7 @@ std::vector<std::string> get_neighbors(const std::string& node) {
 
     // if node has no neighbors
     if (n.empty() && !d.HasMember("error")) { 
-        std::cerr << "Warning: Node \"" << node << "\" has no neighbors.\n"; 
+        std::cerr << "Node \"" << node << "\" has no neighbors.\n"; 
     } 
 
     return n; 
